@@ -147,4 +147,4 @@ Background in the top bar is Tarragona from "El Llorito". (c) 2010-2019 Juan Ver
 
 You can set your own styles in _local/local.css_ without rebuilding the application.
 
-(C) 2018-2019, Incide Digital Data S.L.
+(C) 2018-2020, Incide Digital Data S.L.
