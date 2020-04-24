@@ -287,7 +287,7 @@ export default {
         newTab.component = FileViewTable;
         if (newTab.columns) {
           newTab.extraHeaders = newTab.columns.split(",").map(x => {
-            return { text: x, sort: x + ".keyword" };
+            return this.parseFieldName(x.trim());
           });
         } else {
           newTab.extraHeaders = [];
@@ -328,7 +328,6 @@ export default {
     },
 
     async showDocument(document) {
-      Console.log(document);
       await this.$refs.documentDialog.show(document);
     },
 
@@ -411,7 +410,7 @@ export default {
           analysis: newMetadata.analysis,
           component: FileViewTable,
           extraHeaders: newMetadata.columns.split(",").map(x => {
-            return { text: x.trim(), sort: x.trim() + ".keyword" };
+            return this.parseFieldName(x.trim());
           })
         });
         savedTabs.push(newMetadata);
@@ -434,7 +433,7 @@ export default {
           this.tabs[
             newMetadata.tabIndex
           ].extraHeaders = newMetadata.columns.split(",").map(x => {
-            return { text: x.trim(), sort: x.trim() + ".keyword" };
+            return this.parseFieldName(x.trim());
           });
           savedTabs[newMetadata.tabIndex] = newMetadata;
         }
@@ -454,6 +453,17 @@ export default {
         idx: 0,
         newMetadata: { tabs }
       });
+    },
+
+    /** Parses a field name, returning the name and the sort property (if provided)
+     * @param {String} fieldname - format "name/sort". If sort is not provided, assume "name.keyword"
+     * @returns {text, sort}
+     */
+    parseFieldName(fieldname) {
+      let parsed = fieldname.split("/", 2);
+      if (parsed.length == 1)
+        return { text: fieldname, sort: `${fieldname}.keyword` };
+      return { text: parsed[0], sort: parsed[1] };
     },
 
     /** Show a dialog to edit a source.

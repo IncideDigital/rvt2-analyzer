@@ -8,7 +8,6 @@
     dense
     :server-items-length="resultNumber"
     :loading="runningQuery"
-    @update:sort-by="updateSortBy"
     @update:sort-desc="updateSortDesc"
   >
     <template v-slot:body="{ items }">
@@ -368,14 +367,6 @@ export default {
      */
     async itemExpanded({ item }) {
       this.$emit("show-document", item);
-    },
-
-    /** Get an event: the sort by column has changed. updateSort will be triggered nect by the UI.
-     * @param {String} event - An array with just an element: the name of the column to sort
-     */
-    updateSortBy(event) {
-      // TODO: there are columns without the kwyword that are sortable!
-      this.sortingBy = `${event[0]}.keyword`;
     },
 
     /** Get an event: the order has changed. Fires an event to request a change in the sort order
