@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+    id="file-view-table"
     :headers="customHeaders"
     :items="results"
     class="elevation-1"
@@ -25,14 +26,12 @@
           <td v-if="score">
             {{ item._score }}
           </td>
-          <td
-            v-for="extra in extraHeaders"
-            :key="extra.text"
-            class="text-truncate"
-          >
-            <span :title="item._source[extra.text]">{{
-              getItemData(item._source, extra.text)
-            }}</span>
+          <td v-for="extra in extraHeaders" :key="extra.text">
+            <span
+              :title="getItemData(item._source, extra.text)"
+              class="text-truncate"
+              >{{ getItemData(item._source, extra.text, 22) }}</span
+            >
           </td>
           <td>
             <!-- preview items with a preview path -->
@@ -269,12 +268,14 @@ export default {
           h.push({
             text: this.extraHeaders[i].text,
             value: this.extraHeaders[i].sort,
+            width: "10%",
             sortable: true
           });
         } else {
           h.push({
             text: this.extraHeaders[i].text,
             value: this.extraHeaders[i].text,
+            width: "10%",
             sortable: false
           });
         }
@@ -321,30 +322,6 @@ export default {
       });
     },
 
-    /** @return the CSS classes to apply to a header, according to vuetify docunentation.
-     *
-     * These classes are:
-     *
-     * - column sortable: the column can be sorted
-     * - desc/asc: descending or ascending
-     * - active: the column is used to sort results
-     */
-    headerClasses(header) {
-      let classes = ["text-xs-left"];
-      if (header.sorteable) {
-        classes.push("column sortable");
-        if (this.sorting.descending) {
-          classes.push("desc");
-        } else {
-          classes.push("asc");
-        }
-        if (header.value === this.sorting.sortBy) {
-          classes.push("active");
-        }
-      }
-      return classes;
-    },
-
     /**
      *
      * @param {Number} idx - The index of the document to check in the results array
@@ -362,15 +339,26 @@ export default {
      * @param {Object} dictionary - The dictionary
      * @param {String} name - The name of the data. It might be composite: clientip, geoip.city_name...
      */
-    getItemData(dictionary, name) {
+    getItemData(dictionary, name, truncate) {
       let current = dictionary;
       let data = current[name];
       if (data === undefined) {
         let components = name.split(".", 2);
         if (current[components[0]] === undefined) return undefined;
-        return this.getItemData(current[components[0]], components[1]);
+        data = this.getItemData(current[components[0]], components[1]);
       }
+      if (truncate > 0) return this.truncateText(data, truncate);
       return data;
+    },
+
+    truncateText(text, length) {
+      if (text === undefined) {
+        return text;
+      }
+      if (text.length < length) {
+        return text;
+      }
+      return text.substring(0, length) + "...";
     },
 
     /**
