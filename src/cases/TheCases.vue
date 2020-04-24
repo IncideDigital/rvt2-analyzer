@@ -105,9 +105,9 @@ export default {
       }
     },
 
-    /** Show a dialog to edit a source.
+    /** Show a dialog to edit a case.
 
-    @param {Number} selectedSource - The index of the source to edit in the $store.state.sources.sources array.
+    @param {Number} selectedCase - The index of the case to edit in the $store.state.cases.cases array.
     */
     async editCase(selectedCase) {
       // opens a dialog to modify the source selectedSource
