@@ -31,7 +31,7 @@
             class="text-truncate"
           >
             <span :title="item._source[extra.text]">{{
-              item._source[extra.text]
+              getItemData(item._source, extra.text)
             }}</span>
           </td>
           <td>
@@ -355,6 +355,22 @@ export default {
         this.results[idx].comment !== undefined &&
         this.results[idx].comment !== ""
       );
+    },
+
+    /**
+     * Get a data from an dictionary.
+     * @param {Object} dictionary - The dictionary
+     * @param {String} name - The name of the data. It might be composite: clientip, geoip.city_name...
+     */
+    getItemData(dictionary, name) {
+      let current = dictionary;
+      let data = current[name];
+      if (data === undefined) {
+        let components = name.split(".", 2);
+        if (current[components[0]] === undefined) return undefined;
+        return this.getItemData(current[components[0]], components[1]);
+      }
+      return data;
     },
 
     /**
