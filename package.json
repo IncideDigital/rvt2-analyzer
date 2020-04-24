@@ -1,7 +1,7 @@
 {
   "name": "rvt2-analyzer",
   "description": "A web interface for the rvt2",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": "Juanvi Vera <jvera@incide.es>",
   "license": "GPL",
   "private": true,
