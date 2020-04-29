@@ -18,7 +18,7 @@ Events:
       <v-text-field v-model="icon" label="Material icon name"></v-text-field>
       <v-text-field
         v-model="columns"
-        label="Comma separated list of columns to show"
+        label="Comma separated list of columns to show. Column names has the format name/sort. If sort is not provided, name.keyword is used"
       ></v-text-field>
       <v-checkbox v-model="score" label="Show relevance" />
       <v-checkbox v-model="filename" label="Show filename" />
@@ -57,12 +57,29 @@ export default {
   },
 
   methods: {
+    /**
+     * Returns the list of columns in the format name/sort,name/sort..., removing sort if not necessary (it already includes .keyword)
+     */
+    columnNames(headers) {
+      return headers
+        .map(x => {
+          if (x.sort)
+            if (x.sort.endsWith(".keyword")) {
+              return x.text;
+            } else {
+              return `${x.text}/${x.sort}`;
+            }
+          else return x.text;
+        })
+        .join(",");
+    },
+
     changeInfo: function() {
       this.name = this.name.toUpperCase();
       for (let i = 0; i < this.tabs.length; i++) {
         if (this.name === this.tabs[i].name) {
           this.icon = this.tabs[i].icon;
-          this.columns = this.tabs[i].extraHeaders.map(x => x.text).join(",");
+          this.columns = this.columnNames(this.tabs[1].extraHeaders);
           this.score = this.tabs[i].score;
           this.filename = this.tabs[i].filename;
           this.analysis = this.tabs[i].analysis;

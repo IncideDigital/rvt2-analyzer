@@ -7,6 +7,7 @@
     hide-default-footer
     dense
     :server-items-length="resultNumber"
+    :sort-by.sync="sortBy"
     :loading="runningQuery"
     @update:sort-desc="updateSortDesc"
   >
@@ -244,7 +245,8 @@ export default {
   data() {
     return {
       myResults: [],
-      expanded: []
+      expanded: [],
+      sortBy: "_score"
     };
   },
 
@@ -378,7 +380,7 @@ export default {
      */
     updateSortDesc(event) {
       this.$emit("sort-results", {
-        sortBy: this.sortingBy,
+        sortBy: this.sortBy,
         descending: event[0]
       });
     }
