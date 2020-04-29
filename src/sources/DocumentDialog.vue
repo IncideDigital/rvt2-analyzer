@@ -1,7 +1,7 @@
 <!-- Manages a dialog to change the index metadata. -->
 
 <template>
-  <v-dialog v-model="visible" max-width="1000px" persistent>
+  <v-dialog v-model="visible" max-width="1000px" no-persistent>
     <v-card>
       <v-card-title
         ><span v-if="document" class="headline"

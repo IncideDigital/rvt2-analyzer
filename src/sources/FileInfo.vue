@@ -4,7 +4,7 @@
   <v-simple-table dense>
     <tbody>
       <tr>
-        <th>ID</th>
+        <th>_id</th>
         <td>
           <!-- The identifier links to the document in elasticsearch -->
           <a

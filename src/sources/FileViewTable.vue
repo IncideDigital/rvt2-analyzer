@@ -26,11 +26,12 @@
             {{ item._score }}
           </td>
           <td v-for="extra in extraHeaders" :key="extra.text">
-            <span
-              :title="getItemData(item._source, extra.text)"
-              class="text-truncate"
-              >{{ getItemData(item._source, extra.text, 22) }}</span
-            >
+            <span v-if="extra.text == '_id'">
+              {{ getItemData(item, "_id", 22) }}
+            </span>
+            <span v-else :title="getItemData(item._source, extra.text)">{{
+              getItemData(item._source, extra.text, 22)
+            }}</span>
           </td>
           <td>
             <!-- preview items with a preview path -->
@@ -350,14 +351,17 @@ export default {
       return data;
     },
 
-    truncateText(text, length) {
+    /** Truncates a text (string, number, whatever) to a max length.
+     * If the text is truncated, '...' is appended to the end. */
+    truncateText(text, length = 30) {
       if (text === undefined) {
         return text;
       }
-      if (text.length < length) {
-        return text;
+      let strText = String(text);
+      if (length < 3 || strText.length < length - 3) {
+        return strText;
       }
-      return text.substring(0, length) + "...";
+      return strText.substring(0, length - 3) + "...";
     },
 
     /**
