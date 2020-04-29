@@ -169,7 +169,7 @@
 import QueryForm from "./QueryForm.vue";
 import SourceTable from "@/cases/SourceTable.vue";
 import EditDataDialog from "@/components/EditDataDialog.vue";
-import FileViewTable from "./FileViewTable.vue";
+import DocumentViewTable from "./DocumentViewTable.vue";
 import EditTabDialog from "./EditTabDialog.vue";
 import DocumentDialog from "./DocumentDialog.vue";
 import { mapState } from "vuex";
@@ -284,7 +284,7 @@ export default {
       }
       for (let i = 0; i < savedTabs.length; i++) {
         let newTab = savedTabs[i];
-        newTab.component = FileViewTable;
+        newTab.component = DocumentViewTable;
         if (newTab.columns) {
           newTab.extraHeaders = newTab.columns.split(",").map(x => {
             return this.parseFieldName(x.trim());
@@ -408,7 +408,7 @@ export default {
           title: newMetadata.name,
           filename: newMetadata.filename,
           analysis: newMetadata.analysis,
-          component: FileViewTable,
+          component: DocumentViewTable,
           extraHeaders: newMetadata.columns.split(",").map(x => {
             return this.parseFieldName(x.trim());
           })

@@ -9,7 +9,7 @@
         ></v-card-title
       >
       <v-card-text>
-        <file-info v-if="document" :fileinfo="document"></file-info>
+        <document-info v-if="document" :docinfo="document"></document-info>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import FileInfo from "./FileInfo.vue";
+import DocumentInfo from "./DocumentInfo.vue";
 
 /**
  * A Vue component to show a dialog to edit the fields of any dictionary.
@@ -31,7 +31,7 @@ import FileInfo from "./FileInfo.vue";
  */
 export default {
   components: {
-    FileInfo
+    DocumentInfo
   },
 
   data() {

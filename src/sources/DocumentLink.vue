@@ -12,11 +12,11 @@ embedded_path is defined, and this is the real name of the file.
 <template>
   <span class="filenameLink">
     <span :class="iconClass"></span>&nbsp;
-    <a :href="server + '/' + fileinfo.path" target="_blank">{{
+    <a :href="server + '/' + docinfo.path" target="_blank">{{
       realFilename
     }}</a>
-    <span v-if="fileinfo.embedded_path">
-      (inside <em>{{ fileinfo.filename }}</em
+    <span v-if="docinfo.embedded_path">
+      (inside <em>{{ docinfo.filename }}</em
       >)</span
     >
   </span>
@@ -38,7 +38,7 @@ var categoryIcons = {
 
 export default {
   props: {
-    fileinfo: {
+    docinfo: {
       // the information about the file, as returned by ElasticSearch in hits.hits._source
       type: Object,
       required: true
@@ -52,10 +52,10 @@ export default {
 
   computed: {
     realFilename() {
-      if (this.fileinfo.embedded_path !== undefined) {
-        return this.fileinfo.embedded_path;
+      if (this.docinfo.embedded_path !== undefined) {
+        return this.docinfo.embedded_path;
       } else {
-        return this.fileinfo.filename;
+        return this.docinfo.filename;
       }
     },
 
@@ -65,8 +65,8 @@ export default {
         return `${customIcon} iconByName`;
       }
       // no custom icon: check the category
-      if (this.fileinfo.category) {
-        return categoryIcons[this.fileinfo.category];
+      if (this.docinfo.category) {
+        return categoryIcons[this.docinfo.category];
       }
       return "";
     }

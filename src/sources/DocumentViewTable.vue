@@ -19,7 +19,7 @@
             >
           </td>
           <td v-if="filename">
-            <filename-link :server="sourceServer" :fileinfo="item._source" />
+            <document-link :server="sourceServer" :docinfo="item._source" />
           </td>
 
           <td v-if="score">
@@ -138,30 +138,30 @@
     </template>
 
     <template v-slot:expanded-item>
-      <file-info :fileinfo="0" />
+      <document-info :docinfo="0" />
     </template>
   </v-data-table>
 </template>
 
 <script>
-/** @module search/FileViewTable */
+/** @module search/DocumentViewTable */
 
 /** Ask the controller to sort results using this name and descending.
-@event search/FileViewTable#sort-results
+@event search/DocumentViewTable#sort-results
 @type {object}
 @property {String} sortBy - Name of the column to sort by.
 @property {Boolean} descending - If true, descending sort
 */
 
 /** Ask the listener to show a dialog to edit a column of a document.
-@event search/FileViewTable#request-edit-column
+@event search/DocumentViewTable#request-edit-column
 @type {object}
 @property {Number} idx - The index in the results array of the document to request
 @property {String} name - The name of the column to edit
 */
 
 /** Ask the controller to save a column of a document
-@event search/FileViewTable#save-column
+@event search/DocumentViewTable#save-column
 @type {object}
 @property {Number} idx - The index in the results array of the document to request
 @property {String} name - The name of the column to edit
@@ -169,13 +169,13 @@
 */
 
 /** Ask the controller to show information about an item
-@event search/FileViewTable#show-document
+@event search/DocumentViewTable#show-document
 @type {object}
 */
 
 import { mapState } from "vuex";
-import FilenameLink from "./FilenameLink.vue";
-import FileInfo from "./FileInfo.vue";
+import DocumentLink from "./DocumentLink.vue";
+import DocumentInfo from "./DocumentInfo.vue";
 import HighlightHits from "./HighlightHits.vue";
 import TagEditor from "./TagEditor.vue";
 import Console from "@/lib/Console.js";
@@ -193,15 +193,15 @@ import Console from "@/lib/Console.js";
  * @vue-prop {Array} results - The results to show.
  * @vue-prop {String} sourceServer - The file server to access directly to the files.
  * @vue-prop {Array}  An array of strings with the name of the columns in results._source to show and the column to use for sorting.
- * @fires search/FileViewTable#sort-results
- * @fires search/FileViewTable#request-edit-column
- * @fires search/FileViewTable#save-column
- * @fires search/FileViewTable#show-document
+ * @fires search/DocumentViewTable#sort-results
+ * @fires search/DocumentViewTable#request-edit-column
+ * @fires search/DocumentViewTable#save-column
+ * @fires search/DocumentViewTable#show-document
  */
 export default {
   components: {
-    FilenameLink,
-    FileInfo,
+    DocumentLink,
+    DocumentInfo,
     TagEditor,
     HighlightHits
   },

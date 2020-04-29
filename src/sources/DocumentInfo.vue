@@ -11,20 +11,20 @@
             :href="
               $store.state.config.ESSERVER +
                 '/' +
-                fileinfo._index +
+                docinfo._index +
                 '/' +
-                fileinfo._type +
+                docinfo._type +
                 '/' +
-                fileinfo._id
+                docinfo._id
             "
             target="_blank"
           >
-            {{ fileinfo._id }}
+            {{ docinfo._id }}
           </a>
         </td>
       </tr>
       <!-- The rest of the metadata -->
-      <tr v-for="(item, index) in fileinfo._source" :key="index">
+      <tr v-for="(item, index) in docinfo._source" :key="index">
         <template v-if="index !== 'content'">
           <th>{{ index }}</th>
           <td>{{ item }}</td>
@@ -37,8 +37,8 @@
 <script>
 export default {
   props: {
-    fileinfo: {
-      // the fileinfo object, as returned by elasticsearch in hits.hits._source
+    docinfo: {
+      // the docinfo object, as returned by elasticsearch in hits.hits._source
       type: Object,
       required: true
     }
