@@ -9,137 +9,130 @@
     :server-items-length="resultNumber"
     :sort-by.sync="sortBy"
     :loading="runningQuery"
+    show-expand
+    calculate-widths
     @update:sort-desc="updateSortDesc"
   >
-    <template v-slot:body="{ items }">
-      <tbody>
-        <tr v-for="(item, index) in items" :key="item._id">
-          <td>
-            <v-icon small @click="itemExpanded({ item, index })"
-              >mdi-information</v-icon
-            >
-          </td>
-          <td v-if="filename">
-            <document-link :server="sourceServer" :docinfo="item._source" />
-          </td>
+    <template v-slot:item="{ item, index, isExpanded }">
+      <tr>
+        <td>
+          <v-icon small @click="itemExpanded({ item, value: !isExpanded })"
+            >mdi-information</v-icon
+          >
+        </td>
+        <td v-if="filename">
+          <document-link :server="sourceServer" :docinfo="item._source" />
+        </td>
 
-          <td v-if="score">
-            {{ item._score }}
-          </td>
-          <td v-for="extra in extraHeaders" :key="extra.text">
-            <span v-if="extra.text == '_id'">
-              {{ getItemData(item, "_id", 22) }}
-            </span>
-            <span v-else :title="getItemData(item._source, extra.text)">{{
-              getItemData(item._source, extra.text, 22)
-            }}</span>
-          </td>
-          <td>
-            <!-- preview items with a preview path -->
-            <template v-if="item._source.preview">
-              <v-img
-                :src="sourceServer + '/' + item._source.preview"
-                aspect-ratio="1"
-                class="grey lighten-2"
-                :max-width="imageWidth"
-                :max-height="imageHeight"
-              >
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular
-                      indeterminate
-                      color="grey lighten-5"
-                    ></v-progress-circular>
-                  </v-row>
-                </template>
-              </v-img>
-            </template>
-            <!-- preview images without a container (notice double equals to match "0" and 0) -->
-            <template
-              v-else-if="
-                item._source.category === 'image' &&
-                  item._source.containerid == 0
-              "
+        <td v-if="score">
+          {{ item._score }}
+        </td>
+        <td v-for="extra in extraHeaders" :key="extra.text">
+          <span v-if="extra.text == '_id'">
+            {{ getItemData(item, "_id", 22) }}
+          </span>
+          <span v-else :title="getItemData(item._source, extra.text)">{{
+            getItemData(item._source, extra.text, 22)
+          }}</span>
+        </td>
+        <td>
+          <!-- preview items with a preview path -->
+          <template v-if="item._source.preview">
+            <v-img
+              :src="sourceServer + '/' + item._source.preview"
+              aspect-ratio="1"
+              class="grey lighten-2"
+              :max-width="imageWidth"
+              :max-height="imageHeight"
             >
-              <v-img
-                :src="sourceServer + '/' + item._source.path"
-                aspect-ratio="1"
-                class="grey lighten-2"
-                :max-width="imageWidth"
-                :max-height="imageHeight"
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </template>
+          <!-- preview images without a container (notice double equals to match "0" and 0) -->
+          <template
+            v-else-if="
+              item._source.category === 'image' && item._source.containerid == 0
+            "
+          >
+            <v-img
+              :src="sourceServer + '/' + item._source.path"
+              aspect-ratio="1"
+              class="grey lighten-2"
+              :max-width="imageWidth"
+              :max-height="imageHeight"
+            >
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </template>
+          <!-- preview anything else: results from highlight -->
+          <template v-else>
+            <highlight-hits :highlight="item.highlight" />
+          </template>
+        </td>
+        <td v-if="analysis">
+          <tag-editor
+            :tags="item._source.tags"
+            :data-index="index"
+            @update-tags="updateTags"
+          />
+        </td>
+        <td v-if="analysis">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                text
+                small
+                v-on="on"
+                @click="
+                  $emit('request-edit-column', {
+                    idx: index,
+                    name: 'comment'
+                  })
+                "
               >
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular
-                      indeterminate
-                      color="grey lighten-5"
-                    ></v-progress-circular>
-                  </v-row>
-                </template>
-              </v-img>
-            </template>
-            <!-- preview anything else: results from highlight -->
-            <template v-else>
-              <highlight-hits :highlight="item.highlight" />
-            </template>
-          </td>
-          <td v-if="analysis">
-            <tag-editor
-              :tags="item._source.tags"
-              :data-index="index"
-              @update-tags="updateTags"
-            />
-          </td>
-          <td v-if="analysis">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  text
-                  small
-                  v-on="on"
-                  @click="
-                    $emit('request-edit-column', {
-                      idx: index,
-                      name: 'comment'
-                    })
-                  "
+                <v-icon v-if="item._source.comment"
+                  >mdi-comment-eye-outline</v-icon
                 >
-                  <v-icon v-if="item._source.comment"
-                    >mdi-comment-eye-outline</v-icon
-                  >
-                  <v-icon v-else>mdi-comment</v-icon>
-                </v-btn>
-              </template>
-              <span>Edit comments</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  text
-                  small
-                  v-on="on"
-                  @click="$emit('request-edit-column', { idx: index })"
-                >
-                  <v-icon>mdi-table-column-plus-after</v-icon>
-                </v-btn>
-              </template>
-              <span>Add or edit column</span>
-            </v-tooltip>
-          </td>
-        </tr>
-      </tbody>
+                <v-icon v-else>mdi-comment</v-icon>
+              </v-btn>
+            </template>
+            <span>Edit comments</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                text
+                small
+                v-on="on"
+                @click="$emit('request-edit-column', { idx: index })"
+              >
+                <v-icon>mdi-table-column-plus-after</v-icon>
+              </v-btn>
+            </template>
+            <span>Add or edit column</span>
+          </v-tooltip>
+        </td>
+      </tr>
     </template>
 
-    <template v-slot:expanded-item>
-      <document-info :docinfo="0" />
+    <template v-slot:expanded-item="{ headers, item }">
+      <td :colspan="headers.length">
+        <document-info :docinfo="item" />
+      </td>
     </template>
   </v-data-table>
 </template>
@@ -186,14 +179,13 @@ import Console from "@/lib/Console.js";
  * Computed properties from vuex state:
  *
  * - results: {@link store/modules/searches}
- * - sorting: {@link store/modules/searches}
  *
  * @vue-prop {Boolean} score - If true, show the score column.
  * @vue-prop {Boolean} filaname - If true, show the column filename.
  * @vue-prop {Boolean} analysis - If true, show the analysis columns: tags and actions.
  * @vue-prop {Array} results - The results to show.
  * @vue-prop {String} sourceServer - The file server to access directly to the files.
- * @vue-prop {Array}  An array of strings with the name of the columns in results._source to show and the column to use for sorting.
+ * @vue-prop {Array} extraHeaders - An array of strings with the name of the columns in results._source to show and the column to use for sorting.
  * @fires search/DocumentViewTable#sort-results
  * @fires search/DocumentViewTable#request-edit-column
  * @fires search/DocumentViewTable#save-column
@@ -254,7 +246,13 @@ export default {
     /** @return An array of the headers to show, as needed by vuetify */
     customHeaders() {
       var h = [];
-      h.push({ text: "", value: "info", sortable: false, width: "1%" });
+      //h.push({ text: "", value: "info", sortable: false, width: "1%" });
+      h.push({
+        text: "",
+        value: "data-table-expand",
+        sortable: false,
+        width: "1%"
+      });
       if (this.filename) {
         h.push({ text: "Filename", value: "filename", sorteable: true });
       }
@@ -293,12 +291,7 @@ export default {
       }
       return h;
     },
-    ...mapState("searches", [
-      "results",
-      "sorting",
-      "resultNumber",
-      "runningQuery"
-    ])
+    ...mapState("searches", ["results", "resultNumber", "runningQuery"])
   },
 
   methods: {
@@ -371,8 +364,14 @@ export default {
      * @param item - The item that has been expanded
      * @param value - The index of the item in the array
      */
-    async itemExpanded({ item }) {
-      this.$emit("show-document", item);
+    async itemExpanded({ item, value }) {
+      // TODO: not working: expand all of them. Add expanded.sync=expanded to the table for testing
+      if (value) {
+        this.expanded.push(item);
+        this.$emit("show-document", item);
+      } else {
+        this.expanded.pop(item);
+      }
     },
 
     /** Get an event: the order has changed. Fires an event to request a change in the sort order
