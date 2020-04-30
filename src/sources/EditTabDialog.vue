@@ -79,7 +79,7 @@ export default {
       for (let i = 0; i < this.tabs.length; i++) {
         if (this.name === this.tabs[i].name) {
           this.icon = this.tabs[i].icon;
-          this.columns = this.columnNames(this.tabs[1].extraHeaders);
+          this.columns = this.columnNames(this.tabs[i].extraHeaders);
           this.score = this.tabs[i].score;
           this.filename = this.tabs[i].filename;
           this.analysis = this.tabs[i].analysis;
