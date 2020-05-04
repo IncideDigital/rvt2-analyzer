@@ -233,12 +233,12 @@ const actions = {
       commit
     );
     let response = await esclient.lowlevel_request(
-      `${state.esSourceIndice}/_update_by_query`,
+      `${state.esSourceIndice}/_update_by_query?conflicts=proceed&wait_for_completion=false`,
       "POST",
       a
     );
     if (response) {
-      showMessage(commit, `Tag "${queryData["tags"][0]}" added to the results`);
+      showMessage(commit, `Running task to add "${queryData["tags"][0]}" to results.`);
     }
   },
 
