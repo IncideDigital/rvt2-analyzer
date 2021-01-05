@@ -12,7 +12,7 @@
     "docs": "node_modules/.bin/jsdoc -c .jsdoc.json -R README.md src"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "epic-spinners": "^1.1.0",
     "eslint-loader": "^3.0.2",
     "file-icons-js": "^1.0.3",
